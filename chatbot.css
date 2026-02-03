@@ -1,0 +1,85 @@
+#cbw-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 999999;
+}
+
+#cbw-modal {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 360px;
+  height: 500px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999999;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#cbw-header {
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+}
+
+#cbw-messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.cbw-msg {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  max-width: 80%;
+  font-size: 14px;
+}
+
+.cbw-user {
+  background: #000;
+  color: #fff;
+  margin-left: auto;
+}
+
+.cbw-bot {
+  background: #e5e5e5;
+  color: #000;
+}
+
+#cbw-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+#cbw-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+#cbw-input button {
+  padding: 0 16px;
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
