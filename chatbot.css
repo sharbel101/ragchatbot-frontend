@@ -5,13 +5,32 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #000;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: #fff;
   border: none;
   cursor: pointer;
   font-size: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
   z-index: 999999;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cbw-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+}
+
+.cbw-bounce {
+  animation: cbw-bounce 0.6s ease;
+}
+
+@keyframes cbw-bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 #cbw-modal {
@@ -21,65 +40,184 @@
   width: 360px;
   height: 500px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  display: none;
+  display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 999999;
   font-family: system-ui, -apple-system, sans-serif;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+#cbw-modal.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+@keyframes cbw-slide-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #cbw-header {
-  padding: 12px;
-  background: #000;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: #fff;
   font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#cbw-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: background 0.4s ease;
+}
+
+#cbw-close:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 #cbw-messages {
   flex: 1;
   padding: 12px;
   overflow-y: auto;
-  background: #f9f9f9;
+  background: #f8f9fa;
+  scrollbar-width: thin;
+  scrollbar-color: #007bff #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+#cbw-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#cbw-messages::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+#cbw-messages::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 3px;
+}
+
+#cbw-messages::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
 }
 
 .cbw-msg {
   margin-bottom: 10px;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
   max-width: 80%;
   font-size: 14px;
+  line-height: 1.4;
+  animation: msg-appear 0.3s ease;
+}
+
+@keyframes msg-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .cbw-user {
-  background: #000;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: #fff;
   margin-left: auto;
 }
 
 .cbw-bot {
-  background: #e5e5e5;
-  color: #000;
+  background: #e9ecef;
+  color: #333;
+}
+
+.cbw-typing {
+  background: #e9ecef;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.cbw-typing::after {
+  content: '';
+  width: 20px;
+  height: 4px;
+  background: #007bff;
+  border-radius: 2px;
+  margin-left: 4px;
+  animation: typing 1.5s infinite;
+}
+
+@keyframes typing {
+  0%, 60%, 100% { transform: scaleX(0); }
+  30% { transform: scaleX(1); }
 }
 
 #cbw-input {
   display: flex;
-  border-top: 1px solid #ddd;
+  gap: 6px;
+  border-top: 1px solid #dee2e6;
+  background: #fff;
+  padding: 10px 12px;
+  flex-shrink: 0;
 }
 
 #cbw-input input {
   flex: 1;
-  padding: 10px;
-  border: none;
+  padding: 8px 12px;
+  border: 2px solid #dee2e6;
   outline: none;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+#cbw-input input::placeholder {
+  color: #999;
+}
+
+#cbw-input input:focus {
+  background: #fff;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 #cbw-input button {
-  padding: 0 16px;
+  padding: 8px 16px;
   border: none;
-  background: #000;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: #fff;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.4;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+#cbw-input button:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+#cbw-input button:active {
+  transform: translateY(0);
 }

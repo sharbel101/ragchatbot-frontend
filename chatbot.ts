@@ -12,12 +12,15 @@
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
   button.id = "cbw-button";
-  button.textContent = "🤖";
+  button.innerHTML = "💬"; // Changed to chat icon
 
   const modal = document.createElement("div");
   modal.id = "cbw-modal";
   modal.innerHTML = `
-    <div id="cbw-header">AI Assistant</div>
+    <div id="cbw-header">
+      AI Assistant
+      <button id="cbw-close">×</button>
+    </div>
     <div id="cbw-messages"></div>
     <div id="cbw-input">
       <input type="text" placeholder="Type a message..." />
@@ -30,13 +33,25 @@
 
   const messagesEl = modal.querySelector<HTMLDivElement>("#cbw-messages")!;
   const inputEl = modal.querySelector<HTMLInputElement>("input")!;
-  const sendBtn = modal.querySelector<HTMLButtonElement>("button")!;
+  const sendBtn = modal.querySelector<HTMLButtonElement>("#cbw-input button")!;
+  const closeBtn = modal.querySelector<HTMLButtonElement>("#cbw-close")!;
 
   let open = false;
 
   button.onclick = () => {
     open = !open;
-    modal.style.display = open ? "flex" : "none";
+    if (open) {
+      modal.classList.add("open");
+      button.classList.add("cbw-bounce");
+      setTimeout(() => button.classList.remove("cbw-bounce"), 600);
+    } else {
+      modal.classList.remove("open");
+    }
+  };
+
+  closeBtn.onclick = () => {
+    open = false;
+    modal.classList.remove("open");
   };
 
   function addMessage(text: string, type: "user" | "bot") {
@@ -44,7 +59,7 @@
     div.className = `cbw-msg cbw-${type}`;
     div.textContent = text;
     messagesEl.appendChild(div);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
   }
 
   function sendMessage() {
@@ -54,9 +69,34 @@
     addMessage(text, "user");
     inputEl.value = "";
 
+    // Add typing indicator
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "cbw-msg cbw-typing";
+    typingDiv.textContent = "Typing";
+    messagesEl.appendChild(typingDiv);
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+
     setTimeout(() => {
-      addMessage("This is a placeholder response 🤖", "bot");
-    }, 500);
+      // Remove typing indicator
+      messagesEl.removeChild(typingDiv);
+
+      // Typewriter effect for response
+      const response = "This is a placeholder response 🤖";
+      const botDiv = document.createElement("div");
+      botDiv.className = "cbw-msg cbw-bot";
+      messagesEl.appendChild(botDiv);
+      messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        botDiv.textContent += response[i];
+        i++;
+        messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+        if (i >= response.length) {
+          clearInterval(typeInterval);
+        }
+      }, 50); // 50ms per character
+    }, 1500); // Typing delay
   }
 
   sendBtn.onclick = sendMessage;
