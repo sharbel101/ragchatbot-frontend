@@ -72,7 +72,7 @@
     // Add typing indicator
     const typingDiv = document.createElement("div");
     typingDiv.className = "cbw-msg cbw-typing";
-    typingDiv.textContent = "Typing";
+    typingDiv.innerHTML = 'Typing<span class="cbw-dot"></span><span class="cbw-dot"></span><span class="cbw-dot"></span>';
     messagesEl.appendChild(typingDiv);
     messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
 
