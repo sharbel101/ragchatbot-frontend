@@ -3,6 +3,8 @@
   if (w.__CHATBOT_WIDGET_LOADED__) return;
   w.__CHATBOT_WIDGET_LOADED__ = true;
 
+  let messageHistory: { role: 'user' | 'assistant', content: string }[] = [];
+
   /* ---------- Load CSS ---------- */
   const link = document.createElement("link");
   link.rel = "stylesheet";
@@ -62,12 +64,16 @@
     messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
   }
 
-  function sendMessage() {
+  async function sendMessage() {
     const text = inputEl.value.trim();
     if (!text) return;
 
     addMessage(text, "user");
     inputEl.value = "";
+    
+    // Add to history (keep last 10 messages)
+    messageHistory.push({ role: 'user', content: text });
+    if (messageHistory.length > 10) messageHistory = messageHistory.slice(-10);
 
     // Add typing indicator
     const typingDiv = document.createElement("div");
@@ -76,12 +82,30 @@
     messagesEl.appendChild(typingDiv);
     messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
 
-    setTimeout(() => {
+    try {
+      // TODO: In production, this ID should be configured by the embedding script or config
+      const CLIENT_ID = "76e475d8-adcf-425e-8c6e-7c77eabc50fa";
+
+      const res = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          message: text, 
+          history: messageHistory,
+          clientId: CLIENT_ID 
+        })
+      });
+
+      const data = await res.json();
+      const response = data.answer || "Sorry, I encountered an error.";
+
       // Remove typing indicator
-      messagesEl.removeChild(typingDiv);
+      if (typingDiv.parentNode) messagesEl.removeChild(typingDiv);
+
+      // Add to history
+      messageHistory.push({ role: 'assistant', content: response });
 
       // Typewriter effect for response
-      const response = "This is a placeholder response 🤖";
       const botDiv = document.createElement("div");
       botDiv.className = "cbw-msg cbw-bot";
       messagesEl.appendChild(botDiv);
@@ -95,8 +119,12 @@
         if (i >= response.length) {
           clearInterval(typeInterval);
         }
-      }, 50); // 50ms per character
-    }, 1500); // Typing delay
+      }, 20); // Faster typing speed
+    } catch (err) {
+      if (typingDiv.parentNode) messagesEl.removeChild(typingDiv);
+      addMessage("Error connecting to server.", "bot");
+      console.error(err);
+    }
   }
 
   sendBtn.onclick = sendMessage;
