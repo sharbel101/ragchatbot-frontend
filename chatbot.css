@@ -219,6 +219,25 @@
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+#cbw-mic {
+  background: transparent !important;
+  color: #007bff !important;
+  font-size: 18px !important;
+  padding: 0 8px !important;
+  min-width: unset !important;
+  box-shadow: none !important;
+}
+
+#cbw-mic:hover {
+  background: rgba(0, 123, 255, 0.1) !important;
+  transform: scale(1.1) !important;
+}
+
+#cbw-mic.cbw-mic-listening {
+  background: rgba(0, 123, 255, 0.16) !important;
+  transform: scale(1.1) !important;
+}
+
 #cbw-input button {
   padding: 8px 16px;
   border: none;

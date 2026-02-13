@@ -26,7 +26,13 @@
     <div id="cbw-messages"></div>
     <div id="cbw-input">
       <input type="text" placeholder="Type a message..." />
-      <button>Send</button>
+      <button id="cbw-mic">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </button>
+      <button id="cbw-send">Send</button>
     </div>
   `;
 
@@ -35,8 +41,28 @@
 
   const messagesEl = modal.querySelector<HTMLDivElement>("#cbw-messages")!;
   const inputEl = modal.querySelector<HTMLInputElement>("input")!;
-  const sendBtn = modal.querySelector<HTMLButtonElement>("#cbw-input button")!;
+  const sendBtn = modal.querySelector<HTMLButtonElement>("#cbw-send")!;
+  const micBtn = modal.querySelector<HTMLButtonElement>("#cbw-mic")!;
   const closeBtn = modal.querySelector<HTMLButtonElement>("#cbw-close")!;
+
+  const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+  let recognition: any = null;
+  let isListening = false;
+  let autoSendTimer: number | null = null;
+  const hasSpeech = "SpeechRecognition" in w || "webkitSpeechRecognition" in w;
+
+  function setListeningState(listening: boolean) {
+    isListening = listening;
+    micBtn.classList.toggle("cbw-mic-listening", listening);
+    micBtn.setAttribute("aria-pressed", listening ? "true" : "false");
+    micBtn.title = listening ? "Stop voice input" : "Start voice input";
+  }
+
+  if (!hasSpeech) {
+    micBtn.style.display = "none";
+  } else {
+    setListeningState(false);
+  }
 
   let open = false;
 
@@ -126,6 +152,74 @@
       console.error(err);
     }
   }
+
+  function startRecognition(onText: (text: string) => void) {
+    if (!SpeechRecognition) {
+      alert("Speech recognition not supported in this browser");
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[event.results.length - 1][0].transcript;
+      onText(transcript);
+    };
+
+    recognition.onend = () => {
+      setListeningState(false);
+    };
+
+    recognition.onerror = () => {
+      setListeningState(false);
+    };
+
+    recognition.start();
+    setListeningState(true);
+  }
+
+  function scheduleVoiceAutoSend() {
+    if (autoSendTimer !== null) {
+      window.clearTimeout(autoSendTimer);
+    }
+
+    autoSendTimer = window.setTimeout(() => {
+      autoSendTimer = null;
+      const text = inputEl.value.trim();
+      if (!text) return;
+      stopRecognition();
+      void sendMessage();
+    }, 1000);
+  }
+
+  function stopRecognition() {
+    if (recognition) {
+      recognition.stop();
+    }
+    if (autoSendTimer !== null) {
+      window.clearTimeout(autoSendTimer);
+      autoSendTimer = null;
+    }
+    setListeningState(false);
+  }
+
+  micBtn.onclick = () => {
+    if (!hasSpeech) return;
+
+    if (isListening) {
+      stopRecognition();
+      return;
+    }
+
+    startRecognition((text) => {
+      inputEl.value = text;
+      inputEl.focus();
+      scheduleVoiceAutoSend();
+    });
+  };
 
   sendBtn.onclick = sendMessage;
   inputEl.addEventListener("keydown", (e: KeyboardEvent) => {
