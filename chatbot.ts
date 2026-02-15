@@ -6,7 +6,12 @@ import "./chatbot.css";
   w.__CHATBOT_WIDGET_LOADED__ = true;
 
   let messageHistory: { role: 'user' | 'assistant', content: string }[] = [];
-  const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:3000";
+  const env = (import.meta as any).env;
+  const API_BASE_URL =
+    env?.VITE_API_BASE_URL ||
+    (env?.DEV
+      ? "http://localhost:3000"
+      : "https://ragchatbot-production-f204.up.railway.app");
 
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
