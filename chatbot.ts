@@ -4,6 +4,7 @@
   w.__CHATBOT_WIDGET_LOADED__ = true;
 
   let messageHistory: { role: 'user' | 'assistant', content: string }[] = [];
+  const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:3000";
 
   /* ---------- Load CSS ---------- */
   const link = document.createElement("link");
@@ -112,7 +113,7 @@
       // TODO: In production, this ID should be configured by the embedding script or config
       const CLIENT_ID = "76e475d8-adcf-425e-8c6e-7c77eabc50fa";
 
-      const res = await fetch("http://localhost:3000/chat", {
+      const res = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
