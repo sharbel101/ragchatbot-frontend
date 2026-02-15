@@ -1,3 +1,5 @@
+import "./chatbot.css";
+
 (() => {
   const w = window as any;
   if (w.__CHATBOT_WIDGET_LOADED__) return;
@@ -5,12 +7,6 @@
 
   let messageHistory: { role: 'user' | 'assistant', content: string }[] = [];
   const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:3000";
-
-  /* ---------- Load CSS ---------- */
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "./chatbot.css"; // later this will be CDN URL
-  document.head.appendChild(link);
 
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
