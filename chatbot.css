@@ -145,6 +145,10 @@
   color: #333;
 }
 
+.cbw-msg strong {
+  font-weight: 700;
+}
+
 .cbw-typing {
   background: #e9ecef;
   color: #333;
