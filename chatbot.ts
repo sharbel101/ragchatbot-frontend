@@ -84,10 +84,30 @@ import "./chatbot.css";
     modal.classList.remove("open");
   };
 
+  function escapeHtml(text: string) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatBotMessage(text: string) {
+    const escaped = escapeHtml(text);
+    return escaped
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+  }
+
   function addMessage(text: string, type: "user" | "bot") {
     const div = document.createElement("div");
     div.className = `cbw-msg cbw-${type}`;
-    div.textContent = text;
+    if (type === "bot") {
+      div.innerHTML = formatBotMessage(text);
+    } else {
+      div.textContent = text;
+    }
     messagesEl.appendChild(div);
     messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
   }
@@ -141,8 +161,8 @@ import "./chatbot.css";
 
       let i = 0;
       const typeInterval = setInterval(() => {
-        botDiv.textContent += response[i];
         i++;
+        botDiv.innerHTML = formatBotMessage(response.slice(0, i));
         messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
         if (i >= response.length) {
           clearInterval(typeInterval);
