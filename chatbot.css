@@ -149,6 +149,13 @@
   font-weight: 700;
 }
 
+.cbw-bot a {
+  color: #007bff;
+  text-decoration: underline;
+  font-weight: 600;
+  word-break: break-word;
+}
+
 .cbw-typing {
   background: #e9ecef;
   color: #333;

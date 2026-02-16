@@ -97,6 +97,10 @@ import "./chatbot.css";
     const escaped = escapeHtml(text);
     return escaped
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(
+        /(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+      )
       .replace(/\n/g, "<br>");
   }
 
