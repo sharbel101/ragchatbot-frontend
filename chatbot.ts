@@ -19,6 +19,14 @@ import "./chatbot.css";
       ? DEFAULT_PROD_API_BASE_URL
       : (configuredApiBaseUrl || (isLocalHost ? DEFAULT_LOCAL_API_BASE_URL : DEFAULT_PROD_API_BASE_URL));
   const PUBLIC_KEY = env?.VITE_PUBLIC_KEY || w.__CHATBOT_PUBLIC_KEY__ || "";
+  
+  // Generate or retrieve persistent session ID (16+ random chars)
+  const SESSION_STORAGE_KEY = `cbw_session_${PUBLIC_KEY}`;
+  let SESSION_ID = sessionStorage.getItem(SESSION_STORAGE_KEY);
+  if (!SESSION_ID || SESSION_ID.length < 16) {
+    SESSION_ID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    sessionStorage.setItem(SESSION_STORAGE_KEY, SESSION_ID);
+  }
 
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
@@ -153,7 +161,7 @@ import "./chatbot.css";
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           message: text, 
-          history: messageHistory,
+          sessionId: SESSION_ID,
           public_key: PUBLIC_KEY
         })
       });
