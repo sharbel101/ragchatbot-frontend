@@ -12,6 +12,7 @@ import "./chatbot.css";
     (env?.DEV
       ? "http://localhost:3000"
       : "https://ragchatbot-production-f204.up.railway.app");
+  const PUBLIC_KEY = env?.VITE_PUBLIC_KEY || w.__CHATBOT_PUBLIC_KEY__ || "";
 
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
@@ -135,8 +136,11 @@ import "./chatbot.css";
     messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
 
     try {
-      // TODO: In production, this ID should be configured by the embedding script or config
-      const CLIENT_ID = "76e475d8-adcf-425e-8c6e-7c77eabc50fa";
+      if (!PUBLIC_KEY) {
+        if (typingDiv.parentNode) messagesEl.removeChild(typingDiv);
+        addMessage("Configuration error: missing tenant public key.", "bot");
+        return;
+      }
 
       const res = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/chat`, {
         method: "POST",
@@ -144,7 +148,7 @@ import "./chatbot.css";
         body: JSON.stringify({ 
           message: text, 
           history: messageHistory,
-          clientId: CLIENT_ID 
+          public_key: PUBLIC_KEY
         })
       });
 
