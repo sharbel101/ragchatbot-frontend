@@ -7,11 +7,14 @@ import "./chatbot.css";
 
   let messageHistory: { role: 'user' | 'assistant', content: string }[] = [];
   const env = (import.meta as any).env;
+  const isLocalHost =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  const DEFAULT_LOCAL_API_BASE_URL = "http://localhost:3000";
+  const DEFAULT_PROD_API_BASE_URL = "https://ragchatbot-production-f204.up.railway.app";
   const API_BASE_URL =
     env?.VITE_API_BASE_URL ||
-    (env?.DEV
-      ? "http://localhost:3000"
-      : "https://ragchatbot-production-f204.up.railway.app");
+    (isLocalHost ? DEFAULT_LOCAL_API_BASE_URL : DEFAULT_PROD_API_BASE_URL);
   const PUBLIC_KEY = env?.VITE_PUBLIC_KEY || w.__CHATBOT_PUBLIC_KEY__ || "";
 
   /* ---------- Create UI ---------- */
