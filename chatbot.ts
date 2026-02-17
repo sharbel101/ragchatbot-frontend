@@ -12,9 +12,12 @@ import "./chatbot.css";
     window.location.hostname === "127.0.0.1";
   const DEFAULT_LOCAL_API_BASE_URL = "http://localhost:3000";
   const DEFAULT_PROD_API_BASE_URL = "https://ragchatbot-production-f204.up.railway.app";
+  const configuredApiBaseUrl = env?.VITE_API_BASE_URL || "";
+  const isConfiguredLocalhostApi = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(configuredApiBaseUrl);
   const API_BASE_URL =
-    env?.VITE_API_BASE_URL ||
-    (isLocalHost ? DEFAULT_LOCAL_API_BASE_URL : DEFAULT_PROD_API_BASE_URL);
+    !isLocalHost && isConfiguredLocalhostApi
+      ? DEFAULT_PROD_API_BASE_URL
+      : (configuredApiBaseUrl || (isLocalHost ? DEFAULT_LOCAL_API_BASE_URL : DEFAULT_PROD_API_BASE_URL));
   const PUBLIC_KEY = env?.VITE_PUBLIC_KEY || w.__CHATBOT_PUBLIC_KEY__ || "";
 
   /* ---------- Create UI ---------- */
@@ -154,6 +157,10 @@ import "./chatbot.css";
           public_key: PUBLIC_KEY
         })
       });
+
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
 
       const data = await res.json();
       const response = data.answer || "Sorry, I encountered an error.";
