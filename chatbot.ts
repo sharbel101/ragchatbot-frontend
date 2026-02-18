@@ -28,6 +28,9 @@ import "./chatbot.css";
     sessionStorage.setItem(SESSION_STORAGE_KEY, SESSION_ID);
   }
 
+  // Greeting detection switch
+  let greetingDetected = false;
+
   /* ---------- Create UI ---------- */
   const button = document.createElement("button");
   button.id = "cbw-button";
@@ -172,6 +175,11 @@ import "./chatbot.css";
 
       const data = await res.json();
       const response = data.answer || "Sorry, I encountered an error.";
+
+      // Detect if greeting was triggered (embedding detected greeting)
+      if (response.includes("Hello, I'm Noor") || response.includes("Hello, I'm Noor.")) {
+        greetingDetected = true;
+      }
 
       // Remove typing indicator
       if (typingDiv.parentNode) messagesEl.removeChild(typingDiv);
